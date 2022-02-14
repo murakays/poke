@@ -20,7 +20,7 @@ const TournamentBar: React.FC = () => {
                                 e.preventDefault();
                                 router.push('/upcoming')
                             }}
-                            disabled={router.pathname == '/upcoming'}
+                            disabled={router.pathname === '/upcoming'}
                             sx={{ my: 2, color: 'black', display: 'block', fontWeight: 'bold'}}
                         >
                             開催予定の大会
@@ -31,7 +31,7 @@ const TournamentBar: React.FC = () => {
                                 e.preventDefault();
                                 router.push('/completed')
                             }}
-                            disabled={router.pathname == '/completed'}
+                            disabled={router.pathname === '/completed'}
                             sx={{ my: 2, color: 'black', display: 'block', fontWeight: 'bold'}}
                         >
                             終了した大会
@@ -42,7 +42,7 @@ const TournamentBar: React.FC = () => {
                                 e.preventDefault();
                                 router.push('/ongoing')
                             }}
-                            disabled={router.pathname == '/ongoing'}
+                            disabled={router.pathname === '/ongoing'}
                             sx={{ my: 2, color: 'black', display: 'block', fontWeight: 'bold'}}
                         >
                             現在開催中の大会

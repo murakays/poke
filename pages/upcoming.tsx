@@ -9,6 +9,9 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TournamentBar from "../components/TournamentBar";
 import {css} from "@emotion/react";
+import axios from "axios";
+import useSWR, {SWRConfig} from 'swr';
+import upcomingDatas from "../lib/upcomingDatas";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -30,24 +33,25 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-function createData(
-    date: string,
-    name: string,
-    organizer: string,
-    players: number,
-) {
-    return { date, name, organizer, players};
+export async function getStaticProps () {
+    const result = await upcomingDatas()
+    return {
+        props: {
+            fallback: {
+                '/api/getUpComingTournament': {
+                    results: result
+                }
+            }
+        }
+    }
 }
 
-const rows = [
-    createData('2022年2月13日','トーナメント1', 'player1', 159),
-    createData('2022年2月13日','トーナメント2', 'player1', 159),
-    createData('2022年2月13日','トーナメント3', 'player1', 159),
-    createData('2022年2月13日','トーナメント4', 'player1', 159),
-    createData('2022年2月13日','トーナメント5', 'player1', 159),
-];
-
 const UpcomingTable: React.FC = () => {
+    // TODO ページング取得と再取得関連の調査を行う
+    const fetcher = (url:string) => axios(url).then((res) => res.data);
+    const {data} = useSWR('/api/getUpComingTournament', fetcher);
+    console.log(data);
+
     return (
         <>
             <TournamentBar />
@@ -59,11 +63,11 @@ const UpcomingTable: React.FC = () => {
                             <StyledTableCell align="right" css={tableHeaderStyle}>大会名</StyledTableCell>
                             <StyledTableCell align="right" css={tableHeaderStyle}>主催者</StyledTableCell>
                             <StyledTableCell align="right" css={tableHeaderStyle}>参加者数</StyledTableCell>
-                            <StyledTableCell align="right" css={tableHeaderStyle}>勝者</StyledTableCell>
+                            <StyledTableCell align="right" css={tableHeaderStyle}>登録</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row) => (
+                        {data.results.map((row) => (
                             <StyledTableRow key={row.name}>
                                 <StyledTableCell align="right">{row.date}</StyledTableCell>
                                 <StyledTableCell align="right">{row.name}</StyledTableCell>
@@ -79,8 +83,16 @@ const UpcomingTable: React.FC = () => {
     );
 }
 
+const Page = ({ fallback }) => {
+    return (
+        <SWRConfig value={{fallback}}>
+            <UpcomingTable />
+        </SWRConfig>
+    )
+}
+
 const tableHeaderStyle = css`
     font-weight: bold;
 `;
 
-export default UpcomingTable;
+export default Page;
