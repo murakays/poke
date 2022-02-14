@@ -3,7 +3,7 @@ import { AppProps } from 'next/app'
 import Head from 'next/head'
 import { CssBaseline } from '@mui/material'
 import { ThemeProvider } from '@mui/material'
-import theme from './theme'
+import theme from '../util/theme'
 import { RecoilRoot } from 'recoil'
 import { Global, css } from '@emotion/react'
 
